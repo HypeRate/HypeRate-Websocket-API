@@ -43,7 +43,9 @@ This demo is designed to be published safely.
 1. GitHub → **Settings → Pages**
 2. **Source:** Deploy from a branch
 3. **Branch:** `main`
-4. **Folder:** `/web`
+4. **Folder:** `/docs`
+
+GitHub Pages serves the matching demo from `docs/index.html`. GitHub branch publishing supports the repository root or `/docs`, not `/web`.
 
 ### Important
 Do **not** add real API keys to the repo.  

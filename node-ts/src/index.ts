@@ -11,7 +11,7 @@ if (!DEVICE_ID || !API_KEY) {
 
 const url = `wss://app.hyperate.io/ws/${encodeURIComponent(DEVICE_ID)}?token=${encodeURIComponent(API_KEY)}`;
 
-console.log('Connecting to:', url);
+console.log('Connecting to:', `wss://app.hyperate.io/ws/${encodeURIComponent(DEVICE_ID)}?token=[REDACTED]`);
 
 const ws = new WebSocket(url);
 

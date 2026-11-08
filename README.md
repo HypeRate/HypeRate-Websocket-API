@@ -1,4 +1,4 @@
-# HypeRate Websocket API
+# HypeRate WebSocket API
 
 Public-safe demos and documentation for the **HypeRate WebSocket API (heart rate only)**.
 
@@ -41,7 +41,10 @@ You can request an API key here:
 
 ## GitHub Pages
 
-The browser demo can be safely deployed via **GitHub Pages**.
+Publish `main` → `/docs` in **Settings → Pages**. The demo is then available at:
+https://hyperate.github.io/HypeRate-Websocket-API/
+
+The matching local demo is in `web/index.html`. Keep both HTML files in sync.
 
 Users paste their API key locally — no credentials are shipped with this repo.
 
@@ -50,3 +53,7 @@ Users paste their API key locally — no credentials are shipped with this repo.
 ## Documentation
 
 - [WebSocket API – Heart Rate Only](docs/WEBSOCKET_API.md)
+
+## Official repository
+
+Target repository: [HypeRate/HypeRate-Websocket-API](https://github.com/HypeRate/HypeRate-Websocket-API). This project replaces the former `HypeRate/DevDocs` documentation.

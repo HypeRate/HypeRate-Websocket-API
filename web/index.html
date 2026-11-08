@@ -3,69 +3,127 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>HypeRate WS Minimal Demo</title>
+  <title>HypeRate · WebSocket API Demo</title>
+
+  <!-- Dark UI hints for browsers -->
+  <meta name="color-scheme" content="dark" />
+  <meta name="theme-color" content="#09090b" />
+
+  <!-- Favicon (place your provided image as docs/favicon.png) -->
+  <link rel="icon" type="image/png" sizes="256x256" href="../docs/favicon.png" />
+  <link rel="apple-touch-icon" sizes="256x256" href="../docs/favicon.png" />
+
   <style>
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 24px; line-height: 1.4; }
-    .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: end; }
-    label { display: grid; gap: 6px; font-size: 14px; }
-    input { padding: 10px 12px; font-size: 14px; min-width: 260px; }
-    button { padding: 10px 14px; font-size: 14px; cursor: pointer; }
-    .pill { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 12px; border: 1px solid #ddd; }
-    pre { background: #0b0f14; color: #e6edf3; padding: 14px; border-radius: 12px; overflow: auto; max-height: 55vh; }
-    code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    :root { color-scheme: dark; --accent: #ef4444; --border: #ffffff1a; }
+    * { box-sizing: border-box; }
+    body { font-family: system-ui, -apple-system, Segoe UI, sans-serif; margin: 0; padding: 0; line-height: 1.6; background: #09090b; color: #ffffff; }
+    header { margin-bottom: 32px; }
+    .brand { font-size: 20px; font-weight: 700; letter-spacing: -.025em; }
+    .brand span { color: var(--accent); }
+    .sidebar { position: sticky; top: 0; height: 100vh; width: 256px; flex-shrink: 0; padding: 24px; background: #0d0d10; border-right: 1px solid var(--border); }
+    .sidebar p { margin-top: 4px; font-size: 12px; color: #71717a; }
+    .shell { display: flex; min-height: 100vh; }
+    main { width: 100%; min-width: 0; max-width: 1280px; padding: 40px; margin: 0 auto; }
+    h1 { font-size: 30px; font-weight: 600; letter-spacing: -.025em; line-height: 1.2; margin: 0 0 12px; }
+    p { color: #a1a1aa; }
+    nav { display: grid; gap: 8px; margin-top: 40px; font-size: 14px; }
+    nav a { padding: 10px 12px; border-radius: 8px; text-decoration: none; color: #a1a1aa; }
+    nav a:hover { background: #ffffff0d; color: #fff; }
+    nav a[aria-current] { background: #ffffff1a; color: #fff; font-weight: 500; }
+    a { color: #f87171; text-underline-offset: 4px; }
+    .row { display: flex; gap: 16px; flex-wrap: wrap; align-items: end; padding: 24px; background: #111114; border: 1px solid var(--border); border-radius: 12px; }
+    label { display: grid; gap: 8px; font-size: 14px; color: #d4d4d8; flex: 1 1 240px; }
+    input { width: 100%; padding: 12px 14px; font: inherit; background: #09090b; color: #fff; border: 1px solid var(--border); border-radius: 9px; }
+    input:focus-visible, button:focus-visible, a:focus-visible { outline: 2px solid #f87171; outline-offset: 3px; }
+    input[type=checkbox] { width: auto; accent-color: var(--accent); }
+    button { padding: 12px 18px; font: inherit; font-weight: 600; cursor: pointer; background: #18181b; color: #fff; border: 1px solid var(--border); border-radius: 9px; }
+    #connectBtn { background: var(--accent); border-color: var(--accent); color: #ffffff; }
+    button:hover:enabled { filter: brightness(1.12); }
+    button:disabled { opacity: .45; cursor: not-allowed; }
+    .pill { display: inline-block; padding: 6px 12px; border-radius: 999px; font-size: 13px; border: 1px solid var(--border); color: #d4d4d8; }
+    #status[data-state=connected] { color: #7be0b3; border-color: #34795b; }
+    #hr { color: #f87171; font-size: 24px; font-weight: 750; border-color: #ef444433; font-variant-numeric: tabular-nums; }
+    h2 { font-size: 18px; margin-top: 32px; }
+    pre { background: #0d0d10; color: #d4d4d8; padding: 20px; border-radius: 12px; overflow: auto; min-height: 160px; max-height: 40vh; border: 1px solid var(--border); font-size: 13px; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; overflow-wrap: anywhere; }
+    @media (max-width: 900px) { .shell { display: block; } .sidebar { position: static; height: auto; width: 100%; border-right: 0; border-bottom: 1px solid var(--border); } nav { display: flex; flex-wrap: wrap; margin-top: 20px; gap: 8px; } main { padding: 28px 20px; } }
+    @media (max-width: 600px) { .row { padding: 18px; } label { flex-basis: 100%; } }
+    @media (prefers-reduced-motion: no-preference) { button { transition: filter .15s; } }
   </style>
 </head>
+
 <body>
-  <h1>HypeRate WebSocket – Minimal Heart Rate Demo</h1>
+  <div class="shell">
+  <aside class="sidebar">
+    <div class="brand">HypeRate<span>API</span></div>
+    <p>Developer Resources</p>
+    <nav aria-label="Developer resources">
+      <a href="#demo" aria-current="page">WebSocket Demo</a>
+      <a href="https://github.com/HypeRate/HypeRate-Websocket-API/blob/main/docs/WEBSOCKET_API.md">API Documentation</a>
+      <a href="https://hyperate.io/api">Get an API Key</a>
+      <a href="https://github.com/HypeRate/HypeRate-Websocket-API">GitHub Repository</a>
+    </nav>
+  </aside>
+  <main id="demo">
+  <header>
+  <h1>WebSocket Demo</h1>
   <p>
     Connects to <code>wss://app.hyperate.io</code>, joins <code>hr:&lt;deviceId&gt;</code>,
     and prints <code>hr_update</code> messages.
   </p>
 
-<p class="pill" style="display:inline-block; margin: 8px 0 16px 0;">
-  Public demo: enter your <strong>Device ID</strong> and <strong>API Key</strong> locally. Keys are never shipped with this page.
-</p>
+
+  </header>
+
+  <p class="pill" style="display:inline-block; margin: 8px 0 16px 0;">
+    Public demo: enter your <strong>Device ID</strong> and <strong>API Key</strong> locally. Keys are never shipped with this page.
+  </p>
 
   <div class="row">
     <label>
       Device ID
       <input id="deviceId" placeholder="abc123" />
     </label>
+
     <label>
       API Key (token)
-      <input id="apiKey" placeholder="YOUR_API_KEY" />
+      <input id="apiKey" type="password" autocomplete="off" spellcheck="false" placeholder="YOUR_API_KEY" />
     </label>
 
     <button id="connectBtn">Connect</button>
     <button id="disconnectBtn" disabled>Disconnect</button>
 
-    <label style="display:flex;gap:8px;align-items:center;font-size:12px;">
+    <label style="display:flex;gap:8px;align-items:center;font-size:12px;flex:1 1 100%;">
       <input type="checkbox" id="remember" /> Remember locally
     </label>
     <button id="clearBtn" type="button">Clear saved</button>
 
-    <span class="pill" id="status">disconnected</span>
-    <span class="pill" id="hr">HR: —</span>
+    <span class="pill" id="status" role="status">disconnected</span>
+    <span class="pill" id="hr" aria-live="polite">HR: —</span>
   </div>
-<h2>Log</h2>
+
+  <h2>Log</h2>
   <pre id="log"></pre>
 
+  </main>
+  </div>
+
   <script>
-    // ---- Quick config (optional): loaded from config.js if present ----
     // Optional: you can define window.HYPERATE_CONFIG in the console for quick testing:
-// window.HYPERATE_CONFIG = { DEVICE_ID: "abc123", API_KEY: "..." }
-const CONFIG = window.HYPERATE_CONFIG || {};
+    // window.HYPERATE_CONFIG = { DEVICE_ID: "abc123", API_KEY: "..." }
+    const CONFIG = window.HYPERATE_CONFIG || {};
 
-// Local-only persistence (never leaves the browser)
-const STORAGE_KEY = "hyperate_ws_demo_v1";
-const saved = (() => {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "null"); }
-  catch { return null; }
-})();
+    // Optional local persistence. The key is sent to HypeRate for authentication.
+    const STORAGE_KEY = "hyperate_ws_demo_v1";
+    const saved = (() => {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "null"); }
+      catch { return null; }
+    })();
 
-const DEVICE_ID = (saved?.deviceId || CONFIG.DEVICE_ID || "").toString();
-const API_KEY   = (saved?.apiKey   || CONFIG.API_KEY   || "").toString();
-const $ = (id) => document.getElementById(id);
+    const DEVICE_ID = (saved?.deviceId || CONFIG.DEVICE_ID || "").toString();
+    const API_KEY   = (saved?.apiKey   || CONFIG.API_KEY   || "").toString();
+
+    const $ = (id) => document.getElementById(id);
 
     const logEl = $("log");
     const statusEl = $("status");
@@ -83,13 +141,14 @@ const $ = (id) => document.getElementById(id);
 
     function log(...args) {
       const line = args.map(a => typeof a === "string" ? a : JSON.stringify(a)).join(" ");
-      logEl.textContent += line + "\n";
+      logEl.textContent = (logEl.textContent + line + "\n").split("\n").slice(-301).join("\n");
       logEl.scrollTop = logEl.scrollHeight;
       console.log(...args);
     }
 
     function setStatus(text) {
       statusEl.textContent = text;
+      statusEl.dataset.state = text;
     }
 
     function setHR(value) {
@@ -115,6 +174,7 @@ const $ = (id) => document.getElementById(id);
     }
 
     function connect() {
+      if (ws) return;
       const deviceId = deviceIdInput.value.trim();
       const apiKey = apiKeyInput.value.trim();
 
@@ -125,17 +185,21 @@ const $ = (id) => document.getElementById(id);
 
       const url = `wss://app.hyperate.io/ws/${encodeURIComponent(deviceId)}?token=${encodeURIComponent(apiKey)}`;
 
-// Save or clear locally (optional)
-try {
-  if (rememberEl.checked) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ deviceId, apiKey }));
-    log("[local] saved credentials (localStorage)");
-  } else {
-    localStorage.removeItem(STORAGE_KEY);
-  }
-} catch {}
+      // Save or clear locally (optional)
+      try {
+        if (rememberEl.checked) {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify({ deviceId, apiKey }));
+          log("[local] saved credentials (localStorage)");
+        } else {
+          localStorage.removeItem(STORAGE_KEY);
+        }
+      } catch {}
 
-      log("Connecting to:", url);
+      log("Connecting to:", `wss://app.hyperate.io/ws/${encodeURIComponent(deviceId)}?token=[REDACTED]`);
+      connectBtn.disabled = true;
+      deviceIdInput.disabled = true;
+      apiKeyInput.disabled = true;
+      clearBtn.disabled = true;
       setStatus("connecting");
       setHR(null);
 
@@ -195,6 +259,10 @@ try {
         log("[close]", { code: event.code, reason: event.reason, wasClean: event.wasClean });
         setStatus("disconnected");
         connectBtn.disabled = false;
+        deviceIdInput.disabled = false;
+        apiKeyInput.disabled = false;
+        clearBtn.disabled = false;
+        setHR(null);
         disconnectBtn.disabled = true;
         stopHeartbeat();
         ws = null;
